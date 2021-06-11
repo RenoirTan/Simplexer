@@ -35,7 +35,7 @@ CCXXC := $(CCXX) $(CXXFLAGS)
 
 .PHONY: all mkdir cleanobj clear
 
-all:
+all: token$(FO)
 
 mkdir:
 	@mkdir -p $(DSRC) $(DBIN) $(DINC)
@@ -45,3 +45,7 @@ cleanobj:
 
 clear: cleanobj
 	@rm -rf $(DBIN)/*$(FSO) $(DBIN)/*$(FX)
+
+
+token$(FO): token$(FCXX)
+	$(CCXXC) -c $^ -o $@
