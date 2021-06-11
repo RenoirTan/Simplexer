@@ -1,0 +1,33 @@
+<whitespace_monad> ::= " " | "\n" | "\r" | "\r\n" | "\f" | "\t" ;
+<whitespace> ::= <whitespace_monad>* ;
+<plus> ::= "+" ;
+<minus> ::= "-" ;
+<addition_ops> ::= <plus> | <minus> ;
+<multiply> ::= "*" ;
+<divide> ::= "/" ;
+<multiplication_ops> ::= <multiply> | <divide> ;
+<exponent> ::= "*" ;
+<left_bracket> ::= "(" ;
+<right_bracket> ::= ")" ;
+<decimal_point> ::= "." ;
+<non_zero_digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+<digit> ::= "0" | <non_zero_digit> ;
+<positive_integer> ::= <non_zero_digit><digit>* ;
+<negative_integer> ::= <minus><positive_integer> ;
+<integer> ::= <positive_integer> | <negative_integer> ;
+<positive_float> ::= <positive_integer><decimal_point><digit>* ; # This means `1.` is valid too
+<negative_float> ::= <minus><positive_float> ;
+<float> ::= <positive_float> | <negative_float> ;
+<number> ::= <integer> | <float> ;
+
+<exponent_expression> ::= <number>
+    | <expression> <exponent> <expression> ;
+<multiply_expression> ::= <exponent_expression>
+    | <expression>
+    ;
+<expression> ::= <number> 
+    | <left_bracket> <whitespace> <expression> <whitespace> <right_bracket>
+    | 
+    ;
+
+# Not done as you can see
