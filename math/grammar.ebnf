@@ -21,13 +21,13 @@
 <number> ::= <integer> | <float> ;
 
 <exponent_expression> ::= <number>
-    | <expression> <exponent> <expression> ;
+    | <expression> <whitespace> <exponent> <whitespace> <expression> ;
 <multiply_expression> ::= <exponent_expression>
-    | <expression>
-    ;
-<expression> ::= <number> 
-    | <left_bracket> <whitespace> <expression> <whitespace> <right_bracket>
-    | 
-    ;
+    | <expression> <whitespace> <multiplication_ops> <whitespace> <expression> ;
+<addition_expression> ::= <multiply_expression>
+    | <expression> <whitespace> <addition_ops> <whitespace> <expression> ;
+<expression> ::=
+    | <addition_expression>
+    | <left_bracket> <whitespace> <expression> <whitespace> <right_bracket> ;
 
 # Not done as you can see

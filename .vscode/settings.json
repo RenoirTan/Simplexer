@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "*.txt": "plaintext",
+        "cstdint": "cpp",
+        "istream": "cpp",
+        "iosfwd": "cpp",
+        "limits": "cpp",
+        "utility": "cpp"
+    }
+}
