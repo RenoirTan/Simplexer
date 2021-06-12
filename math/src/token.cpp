@@ -1,6 +1,5 @@
 #include <sstream>
-#include <simplexer/token.hpp>
-#include <simplexer/utils.hpp>
+#include <simplexer.hpp>
 
 
 namespace Simplexer::Math {
@@ -177,6 +176,10 @@ namespace Simplexer::Math {
     bool Token::isDone(void) const noexcept {
         return true;
     }
+
+    bool Token::isEof(void) const noexcept {
+        return (tokenKind == TokenKind::Eof);
+    }
     
     Tokenizer::Tokenizer(std::ifstream *stream) :
         mToken(),
@@ -184,8 +187,23 @@ namespace Simplexer::Math {
         mTokenStatus(0),
         mEofReached(false)
     {
+        if (stream == nullptr) {
+            throw std::string(
+                "std::ifstream *stream cannot be a null pointer!"
+            );
+        }
         mStream = stream;
         *mStream >> mUnit;
+    }
+
+    std::vector<Token> Tokenizer::getTokens(void) {
+        std::vector<Token> tokens;
+        Token token;
+        while (!token.isEof()) {
+            token = this->next();
+            tokens.push_back(token);
+        }
+        return tokens;
     }
     
     Token Tokenizer::next(void) {
@@ -228,7 +246,8 @@ namespace Simplexer::Math {
                 this->getChar();
                 break;
             case 1:
-                // Do not go to the next character!
+                // Reset tokens
+                mToken = Token(mIndex);
                 break;
             case -1:
             case -2:
@@ -236,7 +255,7 @@ namespace Simplexer::Math {
                 return *this;
         }
         mTokenStatus = mToken.eat(mUnit);
-        if (mToken.tokenKind == TokenKind::Eof) {
+        if (mToken.isEof()) {
             this->setEofReached();
             return *this;
         }
@@ -254,5 +273,9 @@ namespace Simplexer::Math {
         mUnit = EOF;
         mTokenStatus = 1;
         return *this;
+    }
+
+    std::vector<Token> tokenize(std::ifstream *stream) {
+        return Tokenizer(stream).getTokens();
     }
 }

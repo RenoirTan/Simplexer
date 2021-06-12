@@ -1,11 +1,11 @@
 #ifndef SIMPLEXER_MATH_TOKEN_HPP
 #   define SIMPLEXER_MATH_TOKEN_HPP
 
+#   include <cstdint>
 #   include <fstream>
-#   include <istream>
 #   include <string>
 #   include <utility>
-#   include <cstdint>
+#   include <vector>
 
 namespace Simplexer::Math {
     enum class CharKind {
@@ -96,11 +96,15 @@ namespace Simplexer::Math {
         int32_t eat(char unit);
 
         bool isDone(void) const noexcept;
+
+        bool isEof(void) const noexcept;
     };
 
     class Tokenizer {
         public:
             Tokenizer(std::ifstream *stream);
+
+            std::vector<Token> getTokens(void);
             Token next(void);
         private:
             std::ifstream *mStream;
@@ -122,6 +126,8 @@ namespace Simplexer::Math {
              */
             Tokenizer &setEofReached(void) noexcept;
     };
+
+    std::vector<Token> tokenize(std::ifstream *stream);
 }
 
 #endif
