@@ -50,3 +50,5 @@ rmtests:
 
 clear: cleanobj
 	@rm -rf $(DBIN)/*$(FSO) $(DBIN)/*$(FX)
+
+include targets.mk
