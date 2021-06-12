@@ -1,8 +1,6 @@
+#include <sstream>
 #include <simplexer/token.hpp>
 #include <simplexer/utils.hpp>
-
-
-namespace slm = Simplexer::Math;
 
 
 namespace Simplexer::Math {
@@ -13,6 +11,8 @@ namespace Simplexer::Math {
             return CharKind::Digit;
         } else {
             switch (unit) {
+                case EOF:
+                    return CharKind::Eof;
                 case '+':
                     return CharKind::Plus;
                 case '-':
@@ -40,6 +40,9 @@ namespace Simplexer::Math {
             1, TokenKind::Whitespace
         );
         switch (ckind) {
+            case CharKind::Eof:
+                result.second = TokenKind::Eof;
+                break;
             case CharKind::Invalid:
                 result.first = 0;
                 break;
@@ -106,6 +109,9 @@ namespace Simplexer::Math {
 
     int32_t Token::eat(char unit) {
         CharKind ckind = getTokenKindMonad(unit);
+        if (ckind == CharKind::Eof) {
+            return 1;
+        }
         std::pair<int32_t, TokenKind> tkMonad = charKindToTokenKind(ckind);
         bool isNewToken = false;
         if (tkMonad.first == 0) {
@@ -167,9 +173,86 @@ namespace Simplexer::Math {
             return 0;
         }
     }
+
+    bool Token::isDone(void) const noexcept {
+        return true;
+    }
     
-    Tokenizer::Tokenizer(std::streambuf *streambuf) :
-        mStream(streambuf),
-        mCurrent()
-    {}
+    Tokenizer::Tokenizer(std::ifstream *stream) :
+        mToken(),
+        mIndex(0),
+        mTokenStatus(0),
+        mEofReached(false)
+    {
+        mStream = stream;
+        *mStream >> mUnit;
+    }
+    
+    Token Tokenizer::next(void) {
+        while (mTokenStatus != 1) {
+            this->eat();
+            std::ostringstream errorMsg;
+            switch (mTokenStatus) {
+                case 0:
+                    continue;
+                case 1:
+                    return mToken;
+                case -1:
+                    errorMsg
+                        << "Token Syntax Error: "
+                        << "Unexpected " << "'" << mUnit << "' "
+                        << "after " << mToken.span << " "
+                        << "at index " << mIndex;
+                    throw errorMsg.str();
+                case -2:
+                    errorMsg
+                        << "Unknown Token Error: "
+                        << "'" << mUnit << "' "
+                        << "at index " << mIndex;
+                    throw errorMsg.str();
+                default:
+                    errorMsg
+                        << "Unknown status code returned: " << mTokenStatus;
+                    throw errorMsg.str();
+            }
+        }
+        return mToken;
+    }
+
+    Tokenizer &Tokenizer::eat(void) noexcept {
+        if (mEofReached) {
+            return *this;
+        }
+        switch (mTokenStatus) {
+            case 0:
+                this->getChar();
+                break;
+            case 1:
+                // Do not go to the next character!
+                break;
+            case -1:
+            case -2:
+            default:
+                return *this;
+        }
+        mTokenStatus = mToken.eat(mUnit);
+        if (mToken.tokenKind == TokenKind::Eof) {
+            this->setEofReached();
+            return *this;
+        }
+        return *this;
+    }
+
+    char Tokenizer::getChar(void) noexcept {
+        *mStream >> mUnit;
+        mIndex++;
+        return mUnit;
+    }
+
+    Tokenizer &Tokenizer::setEofReached(void) noexcept {
+        mEofReached = true;
+        mUnit = EOF;
+        mTokenStatus = 1;
+        return *this;
+    }
 }
