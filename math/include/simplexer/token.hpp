@@ -1,6 +1,7 @@
 #ifndef SIMPLEXER_MATH_TOKEN_HPP
 #   define SIMPLEXER_MATH_TOKEN_HPP
 
+#   include <fstream>
 #   include <istream>
 #   include <string>
 #   include <utility>
@@ -8,6 +9,7 @@
 
 namespace Simplexer::Math {
     enum class CharKind {
+        Eof,
         Invalid,
         Whitespace,
         Digit,
@@ -22,6 +24,7 @@ namespace Simplexer::Math {
     };
 
     enum class TokenKind {
+        Eof,
         Whitespace,
         Integer,
         Float,
@@ -60,7 +63,23 @@ namespace Simplexer::Math {
         size_t endIndex;
 
         Token(size_t index = 0) noexcept;
+        Token(const Token &other) = default;
+        Token(Token &&other) = default;
+        Token &operator=(const Token &other) = default;
+        Token &operator=(Token &&other) = default;
+
+        /**
+         * @brief See if span is empty or not.
+         * 
+         * @return bool
+         */
         bool isEmpty(void) const noexcept;
+
+        /**
+         * @brief See if the length of span is at least 1.
+         * 
+         * @return bool
+         */
         operator bool() const noexcept;
 
         /**
@@ -75,18 +94,33 @@ namespace Simplexer::Math {
          * @return int32_t - Status code
          */
         int32_t eat(char unit);
+
+        bool isDone(void) const noexcept;
     };
 
     class Tokenizer {
         public:
-            Tokenizer(std::streambuf *streambuf);
+            Tokenizer(std::ifstream *stream);
             Token next(void);
         private:
-            std::istream mStream;
-            Token mCurrent;
+            std::ifstream *mStream;
+            Token mToken;
             size_t mIndex;
+            int32_t mTokenStatus;
+            bool mEofReached;
+            char mUnit;
 
-            Tokenizer &eat(void);
+            Tokenizer &eat(void) noexcept;
+
+            char getChar(void) noexcept;
+            
+            /**
+             * @brief Set this tokenizer to a 'completed' state if EOF
+             * reached.
+             * 
+             * @return Tokenizer& - this tokenizer
+             */
+            Tokenizer &setEofReached(void) noexcept;
     };
 }
 

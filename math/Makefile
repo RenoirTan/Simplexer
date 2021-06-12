@@ -28,14 +28,14 @@ CINC := -I$(DINC)
 CCSTD := c11
 CCXXSTD := c++17
 CFLAGS := $(CINC) -m64 -Wall -fPIC -O2 $(CDEF)
-CCFLAGS := $(CFLAGS) $(CCSTD)
-CCXXFLAGS := $(CFLAGS) $(CCXXSTD)
+CCFLAGS := $(CFLAGS) --std=$(CCSTD)
+CCXXFLAGS := $(CFLAGS) --std=$(CCXXSTD)
 CCC := $(CC) $(CCFLAGS)
-CCXXC := $(CCXX) $(CXXFLAGS)
+CCXXC := $(CCXX) $(CCXXFLAGS)
 
 .PHONY: all mkdir cleanobj clear
 
-all: token$(FO)
+all: $(DBIN)/token$(FO)
 
 mkdir:
 	@mkdir -p $(DSRC) $(DBIN) $(DINC)
@@ -47,5 +47,5 @@ clear: cleanobj
 	@rm -rf $(DBIN)/*$(FSO) $(DBIN)/*$(FX)
 
 
-token$(FO): token$(FCXX)
+$(DBIN)/token$(FO): $(DSRC)/token$(FCXX)
 	$(CCXXC) -c $^ -o $@
