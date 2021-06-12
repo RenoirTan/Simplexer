@@ -10,6 +10,12 @@
 #   define conform(x, a, b) (max(a, min(x, b)))
 
 namespace Simplexer::Math {
+
+    /**
+     * @brief Checks whether the current byte is a whitespace character.
+     * 
+     * @param unit 
+     */
     bool isWhitespace(char unit) noexcept {
         switch (unit) {
             case ' ':
@@ -23,6 +29,13 @@ namespace Simplexer::Math {
         }
     }
 
+    /**
+     * @brief Converts a character into an integer with a certain base.
+     * 
+     * @param unit 
+     * @param base 
+     * @return int32_t 
+     */
     int32_t toInteger(char unit, size_t base = 10) noexcept {
         if (base < 1 || base > 36) {
             return -1;
@@ -38,6 +51,17 @@ namespace Simplexer::Math {
         }
     }
 
+    /**
+     * @brief Checks if a character byte is a valid digit in a specified
+     * number base.
+     * 
+     * This function uses errno.
+     * If errno is 0: OK
+     * If errno is 1: Base error
+     * 
+     * @param unit 
+     * @param base
+     */
     bool isDigit(char unit, size_t base = 10) noexcept {
         int32_t res = toInteger(unit, base);
         switch (res) {
