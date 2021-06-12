@@ -37,7 +37,7 @@ CCXXC := $(CCXX) $(CCXXFLAGS)
 
 .PHONY: all mkdir cleanobj clear rmtests
 
-all: $(DBIN)/token$(FO)
+all:
 
 mkdir:
 	@mkdir -p $(DSRC) $(DBIN) $(DINC)
@@ -51,6 +51,4 @@ rmtests:
 clear: cleanobj
 	@rm -rf $(DBIN)/*$(FSO) $(DBIN)/*$(FX)
 
-
-$(DBIN)/token$(FO): $(DSRC)/token$(FCXX)
-	$(CCXXC) -c $^ -o $@
+include targets.mk
