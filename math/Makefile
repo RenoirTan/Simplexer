@@ -9,7 +9,9 @@ CCXX := g++
 DSRC := src
 DBIN := bin
 DINC := include
+DTES := tests
 
+FTEST := test-
 FC := .c
 FCXX := .cpp
 FO := .o
@@ -33,7 +35,7 @@ CCXXFLAGS := $(CFLAGS) --std=$(CCXXSTD)
 CCC := $(CC) $(CCFLAGS)
 CCXXC := $(CCXX) $(CCXXFLAGS)
 
-.PHONY: all mkdir cleanobj clear
+.PHONY: all mkdir cleanobj clear rmtests
 
 all: $(DBIN)/token$(FO)
 
@@ -42,6 +44,9 @@ mkdir:
 
 cleanobj:
 	@rm -rf $(DBIN)/*$(FO) $(DBIN)/*$(FA) $(DBIN)/*$(FARSO)
+
+rmtests:
+	@rm -rf $(DBIN)/$(FTEST)*
 
 clear: cleanobj
 	@rm -rf $(DBIN)/*$(FSO) $(DBIN)/*$(FX)
