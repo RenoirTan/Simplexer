@@ -25,7 +25,7 @@ else
 endif
 FARSO := $(FSO)$(FAR)
 
-CDEF := 
+CDEF := #-DSIMPLEXER_DEBUG
 CINC := -I$(DINC)
 CCSTD := c11
 CCXXSTD := c++17
@@ -40,7 +40,7 @@ CCXXC := $(CCXX) $(CCXXFLAGS)
 all:
 
 mkdir:
-	@mkdir -p $(DSRC) $(DBIN) $(DINC)
+	@mkdir -p $(DSRC) $(DBIN) $(DINC) $(DTES)
 
 cleanobj:
 	@rm -rf $(DBIN)/*$(FO) $(DBIN)/*$(FA) $(DBIN)/*$(FARSO)
