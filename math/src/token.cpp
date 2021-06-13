@@ -191,9 +191,6 @@ namespace Simplexer::Math {
 #ifdef SIMPLEXER_DEBUG
         std::cout << "ckind: " << charKindAsString(ckind) << std::endl;
 #endif
-        if (ckind == CharKind::Eof) {
-            return 1;
-        }
         std::pair<int32_t, TokenKind> tkMonad = charKindToTokenKind(ckind);
         bool isNewToken = false;
         if (tkMonad.first == 0) {
@@ -201,7 +198,9 @@ namespace Simplexer::Math {
         }
         if (this->isEmpty()) {
             if (tkMonad.first == 1) {
+                isNewToken = false;
                 tokenKind = tkMonad.second;
+                goto stateChannel;
             } else if (tkMonad.first == 2) {
                 switch (ckind) {
                     case CharKind::Fullstop:
@@ -236,6 +235,7 @@ namespace Simplexer::Math {
                     isNewToken = true;
                 }
                 break;
+            case TokenKind::Eof:
             case TokenKind::Plus:
             case TokenKind::Minus:
             case TokenKind::Multiply:
@@ -247,6 +247,8 @@ namespace Simplexer::Math {
                 isNewToken = true;
                 break;
         }
+    
+    stateChannel:
         if (isNewToken) {
             return 1;
         } else {
@@ -290,19 +292,18 @@ namespace Simplexer::Math {
     }
     
     Token Tokenizer::next(void) {
-        while (mTokenStatus != 1) {
+        do {
             this->eat();
             std::ostringstream errorMsg;
             switch (mTokenStatus) {
                 case 0:
                     continue;
-                case 1: {
-                    // New scope as a guarantee to the compiler that this token
-                    // is only valid and will only be used in this case
-                    Token token = mToken;
-                    mTokenStatus = 0;
-                    return token;
-                }
+                case 1:
+                    // Break because the token will be returned after the
+                    // while loop
+                    //
+                    // I swear I know what I'm doing... I think
+                    break;
                 case -1:
                     errorMsg
                         << "Token Syntax Error: "
@@ -321,7 +322,7 @@ namespace Simplexer::Math {
                         << "Unknown status code returned: " << mTokenStatus;
                     throw errorMsg.str();
             }
-        }
+        } while (mTokenStatus != 1);
         return mToken;
     }
 
@@ -336,6 +337,7 @@ namespace Simplexer::Math {
             case 1:
                 // Reset tokens
                 mToken = Token(mIndex);
+                mTokenStatus = 0;
                 break;
             case -1:
             case -2:
