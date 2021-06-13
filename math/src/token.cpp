@@ -38,13 +38,39 @@ namespace Simplexer::Math {
         }
     }
 
+    std::string tokenKindAsString(TokenKind tkind) noexcept {
+        switch (tkind) {
+            case TokenKind::Eof:
+                return "TokenKind::Eof";
+            case TokenKind::Whitespace:
+                return "TokenKind::Whitespace";
+            case TokenKind::Integer:
+                return "TokenKind::Integer";
+            case TokenKind::Float:
+                return "TokenKind::Float";
+            case TokenKind::Plus:
+                return "TokenKind::Plus";
+            case TokenKind::Minus:
+                return "TokenKind::Minus";
+            case TokenKind::Multiply:
+                return "TokenKind::Multiply";
+            case TokenKind::Divide:
+                return "TokenKind::Divide";
+            case TokenKind::Exponent:
+                return "TokenKind::Exponent";
+            case TokenKind::LeftBracket:
+                return "TokenKind::LeftBracket";
+            case TokenKind::RightBracket:
+                return "TokenKind::RightBracket";
+            default:
+                return "TokenKind::Unknown";
+        }
+    }
+
     CharKind getCharKind(char unit) noexcept {
         if (isWhitespace(unit)) {
             return CharKind::Whitespace;
         } else if (isDigit(unit, 10)) {
-#ifdef SIMPLEXER_DEBUG
-            std::cout << "is digit!" << std::endl;
-#endif
             return CharKind::Digit;
         } else {
             switch (unit) {
@@ -135,6 +161,22 @@ namespace Simplexer::Math {
         startIndex(index),
         endIndex(index)
     {}
+
+    std::string Token::asString(void) const noexcept {
+        std::ostringstream repr;
+        repr
+            << "Simplexer::Math::Token { "
+            << ".tokenKind = " << tokenKindAsString(tokenKind) << ", "
+            << ".span = \"" << span << "\", "
+            << ".startIndex = " << startIndex << ", "
+            << ".endIndex = " << endIndex
+            << " }";
+        return repr.str();
+    }
+
+    std::ostream &operator<<(std::ostream &os, const Token &self) {
+        return os << self.asString();
+    }
 
     bool Token::isEmpty(void) const noexcept {
         return (endIndex - startIndex) == 0;
@@ -317,7 +359,7 @@ namespace Simplexer::Math {
     }
 
     char Tokenizer::getChar(void) noexcept {
-        *mStream >> mUnit;
+        mUnit = mStream->get();
         mIndex++;
         return mUnit;
     }

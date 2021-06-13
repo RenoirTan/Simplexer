@@ -35,7 +35,7 @@ int run(ProgramOptions &progopts) {
             std::cerr << "!! " << error << std::endl;
             break;
         }
-        std::cout << "Token: " << token.span << std::endl;
+        std::cout << token << std::endl;
         index++;
     } while (!token.isEof() && index < 10);
     return 0;

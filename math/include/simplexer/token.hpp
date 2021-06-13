@@ -63,6 +63,14 @@ namespace Simplexer::Math {
     };
 
     /**
+     * @brief Get the string reperesentation of a TokenKind object.
+     * 
+     * @param tkind 
+     * @return std::string 
+     */
+    std::string tokenKindAsString(TokenKind tkind) noexcept;
+
+    /**
      * @brief Guess the kind of token from a CharKind. This CharKind is an
      * internal representation of 1 character from an istream, and so
      * does not have access to other characters within the stream.
@@ -127,6 +135,17 @@ namespace Simplexer::Math {
         Token(Token &&other) = default;
         Token &operator=(const Token &other) = default;
         Token &operator=(Token &&other) = default;
+
+        std::string asString(void) const noexcept;
+
+        /**
+         * @brief Friend function for cout and the like.
+         * 
+         * @param os 
+         * @param self 
+         * @return std::ostream& 
+         */
+        friend std::ostream &operator<<(std::ostream &os, const Token &self);
 
         /**
          * @brief See if span is empty or not.

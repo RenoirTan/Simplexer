@@ -44,11 +44,7 @@ namespace Simplexer::Math {
             return -1;
         }
         unit = (char) std::tolower(unit);
-#ifdef SIMPLEXER_DEBUG
-        std::cout << "toInteger -) unit: " << unit << std::endl;
-        std::cout << "toInteger -) base: " << base << std::endl;
-#endif
-        if ('0' <= unit && unit < '0' + min(base, 10)) {
+        if ('0' <= unit && unit < (char) ('0' + min(base, 10))) {
             return unit - '0';
         } else if ('a' <= unit && unit < conform(unit, 'a', 'z' + 1)) {
             return unit - 'a';
@@ -70,10 +66,6 @@ namespace Simplexer::Math {
      */
     bool isDigit(char unit, size_t base) noexcept {
         int32_t res = toInteger(unit, base);
-#ifdef SIMPLEXER_DEBUG
-        std::cout
-            << "isDigit -) res: " << res << std::endl;
-#endif
         switch (res) {
             case -1:
                 errno = 1;
