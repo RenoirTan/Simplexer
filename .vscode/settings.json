@@ -6,6 +6,7 @@
         "iosfwd": "cpp",
         "limits": "cpp",
         "utility": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "ostream": "cpp"
     }
 }

@@ -1,12 +1,50 @@
 #include <sstream>
 #include <simplexer.hpp>
 
+#ifdef SIMPLEXER_DEBUG
+#   include <iostream>
+#endif
+
 
 namespace Simplexer::Math {
+    std::string charKindAsString(CharKind ckind) noexcept {
+        switch (ckind) {
+            case CharKind::Eof:
+                return "CharKind::Eof";
+            case CharKind::Invalid:
+                return "CharKind::Invalid";
+            case CharKind::Whitespace:
+                return "CharKind::Whitespace";
+            case CharKind::Digit:
+                return "CharKind::Digit";
+            case CharKind::Plus:
+                return "CharKind::Plus";
+            case CharKind::Minus:
+                return "CharKind::Minus";
+            case CharKind::Multiply:
+                return "CharKind::Multiply";
+            case CharKind::Divide:
+                return "CharKind::Divide";
+            case CharKind::Exponent:
+                return "CharKind::Exponent";
+            case CharKind::LeftBracket:
+                return "CharKind::LeftBracket";
+            case CharKind::RightBracket:
+                return "CharKind::RightBracket";
+            case CharKind::Fullstop:
+                return "CharKind::Fullstop";
+            default:
+                return "CharKind::Unknown";
+        }
+    }
+
     CharKind getTokenKindMonad(char unit) noexcept {
         if (isWhitespace(unit)) {
             return CharKind::Whitespace;
         } else if (isDigit(unit, 10)) {
+#ifdef SIMPLEXER_DEBUG
+            std::cout << "is digit!" << std::endl;
+#endif
             return CharKind::Digit;
         } else {
             switch (unit) {
@@ -108,6 +146,9 @@ namespace Simplexer::Math {
 
     int32_t Token::eat(char unit) {
         CharKind ckind = getTokenKindMonad(unit);
+#ifdef SIMPLEXER_DEBUG
+        std::cout << "ckind: " << charKindAsString(ckind) << std::endl;
+#endif
         if (ckind == CharKind::Eof) {
             return 1;
         }
@@ -193,7 +234,7 @@ namespace Simplexer::Math {
             );
         }
         mStream = stream;
-        *mStream >> mUnit;
+        // *mStream >> mUnit;
     }
 
     std::vector<Token> Tokenizer::getTokens(void) {
@@ -213,8 +254,13 @@ namespace Simplexer::Math {
             switch (mTokenStatus) {
                 case 0:
                     continue;
-                case 1:
-                    return mToken;
+                case 1: {
+                    // New scope as a guarantee to the compiler that this token
+                    // is only valid and will only be used in this case
+                    Token token = mToken;
+                    mTokenStatus = 0;
+                    return token;
+                }
                 case -1:
                     errorMsg
                         << "Token Syntax Error: "
@@ -254,7 +300,15 @@ namespace Simplexer::Math {
             default:
                 return *this;
         }
+#ifdef SIMPLEXER_DEBUG
+        std::cout
+            << "Current index: " << mIndex << std::endl
+            << "Current char: " << mUnit << std::endl;
+#endif
         mTokenStatus = mToken.eat(mUnit);
+#ifdef SIMPLEXER_DEBUG
+        std::cout << "Token status: " << mTokenStatus << std::endl;
+#endif
         if (mToken.isEof()) {
             this->setEofReached();
             return *this;

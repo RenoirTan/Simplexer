@@ -38,6 +38,14 @@ namespace Simplexer::Math {
     };
 
     /**
+     * @brief Get the string representation of CharKind.
+     * 
+     * @param ckind 
+     * @return std::string 
+     */
+    std::string charKindAsString(CharKind ckind) noexcept;
+
+    /**
      * @brief An enumerator classifying a group of tokens.
      */
     enum class TokenKind {
