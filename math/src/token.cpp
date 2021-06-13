@@ -38,7 +38,7 @@ namespace Simplexer::Math {
         }
     }
 
-    CharKind getTokenKindMonad(char unit) noexcept {
+    CharKind getCharKind(char unit) noexcept {
         if (isWhitespace(unit)) {
             return CharKind::Whitespace;
         } else if (isDigit(unit, 10)) {
@@ -145,7 +145,7 @@ namespace Simplexer::Math {
     }
 
     int32_t Token::eat(char unit) {
-        CharKind ckind = getTokenKindMonad(unit);
+        CharKind ckind = getCharKind(unit);
 #ifdef SIMPLEXER_DEBUG
         std::cout << "ckind: " << charKindAsString(ckind) << std::endl;
 #endif

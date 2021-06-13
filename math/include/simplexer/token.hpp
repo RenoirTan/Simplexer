@@ -83,7 +83,7 @@ namespace Simplexer::Math {
      * @param unit 
      * @return CharKind 
      */
-    CharKind getTokenKindMonad(char unit) noexcept;
+    CharKind getCharKind(char unit) noexcept;
 
     /**
      * @brief Return true if `tkind` is an operator token.
