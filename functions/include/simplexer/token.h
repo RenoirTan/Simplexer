@@ -30,14 +30,10 @@ static const char *SLF_TOKEN_KINDS[] = {
 };
 
 /**
- * @brief The minimum reserved length for Token::span
+ * @brief The maximum length of a token.
+ * (This is why I prefer C++ despite its intricacies)
  */
-static const size_t SLF_MIN_TOKEN_SPAN = 32;
-
-/**
- * @brief How much capacity should increase at any one time
- */
-static const size_t SLF_TOKEN_INCREMENT = 8;
+#   define SLF_TOKEN_MAXLEN 32
 
 /**
  * @brief A structure representing a token
@@ -47,13 +43,72 @@ typedef struct SlfToken {
     SlfUnit *span;
     size_t start_index;
     size_t length;
-    size_t capacity;
 } SlfToken;
 
-SlfUnit *_slf_token_alloc_span(SlfUnit *span, size_t length);
-
+/**
+ * @brief Creates a new SlfToken object.
+ * 
+ * @return SlfToken 
+ */
 SlfToken slf_token_new(void);
 
-size_t slf_token_required_capacity(SlfToken *token);
+/**
+ * @brief Initializes a SlfToken object.
+ * 
+ * @param token 
+ * @return int32_t 
+ */
+int32_t slf_token_init(SlfToken *token);
+
+/**
+ * @brief Frees up the memory blocks pointed to by the pointers in a
+ * SlfToken object. This does not free up the SlfToken object itself, because
+ * it may have been allocated on the stack.
+ * 
+ * @param token 
+ * @return int32_t 
+ */
+int32_t slf_token_destroy(SlfToken *token);
+
+/**
+ * @brief Set token->span to a predetermined value. If `span` exceeds
+ * `SLF_TOKEN_MAXLEN`, it will be cut off prematurely by the sentinel
+ * value used to terminate C strings (i.e. '\0').
+ * 
+ * @param token 
+ * @param span 
+ * @return int32_t 
+ */
+int32_t slf_token_set_span(SlfToken *token, SlfUnit *span);
+
+/**
+ * @brief Checks if token->span has already been allocated on the heap.
+ * 
+ * Codes:
+ * 0: Ok
+ * -1: token is NULL
+ * 1: token->span is NULL
+ * 
+ * @param token 
+ * @return int32_t 
+ */
+inline int32_t _slf_token_check_span_allocated(SlfToken *token);
+
+/**
+ * @brief Check (and change, if necessary) the value of token->length
+ * depending on the value of token->span.
+ * 
+ * @param token 
+ * @return int32_t 
+ */
+inline int32_t _slf_token_check_length(SlfToken *token);
+
+/**
+ * @brief Allocate memory for token->span.
+ * 
+ * @param token 
+ * @return int32_t 
+ */
+int32_t _slf_token_alloc(SlfToken *token);
 
 #endif

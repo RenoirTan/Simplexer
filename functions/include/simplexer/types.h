@@ -6,7 +6,9 @@
 /**
  * @brief The type used to represent a character in a token.
  */
-typedef int32_t SlfUnit;
+typedef char SlfUnit;
+
+#   define SLF_SPAN_BYTES(length) (length * sizeof(SlfUnit))
 
 /**
  * @brief The type used to represented the status code of an action, such
