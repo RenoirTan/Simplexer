@@ -3,5 +3,7 @@
 
 #   include "simplexer/macro.h"
 #   include "simplexer/token.h"
+#   include "simplexer/tokenizer.h"
+#   include "simplexer/types.h"
 
 #endif
