@@ -1,6 +1,7 @@
 #ifndef SIMPLEXER_FUNCTIONS_TOKEN_H
 #   define SIMPLEXER_FUNCTIONS_TOKEN_H
 
+#   include <stdbool.h>
 #   include <stdint.h>
 #   include "macro.h"
 #   include "types.h"
@@ -37,12 +38,21 @@ static const char *SLF_TOKEN_KINDS[] = {
 
 /**
  * @brief A structure representing a token
+ * 
+ * token->status:
+ * -3: Internal error. That's on me.
+ * -2: Token span too long
+ * -1: Invalid unit
+ * 0: Valid Token, but can accumulate more units
+ * 1: Valid Token, but cannot accumulate more units
+ * 2: Currently invalid token, but by adding more units, may become valid
  */
 typedef struct SlfToken {
     SlfTokenKind token_kind;
     SlfUnit *span;
     size_t start_index;
     size_t length;
+    int32_t status;
 } SlfToken;
 
 /**
@@ -71,15 +81,27 @@ int32_t slf_token_init(SlfToken *token);
 int32_t slf_token_destroy(SlfToken *token);
 
 /**
- * @brief Set token->span to a predetermined value. If `span` exceeds
- * `SLF_TOKEN_MAXLEN`, it will be cut off prematurely by the sentinel
- * value used to terminate C strings (i.e. '\0').
+ * @brief Add a unit to the span.
  * 
  * @param token 
- * @param span 
+ * @param unit 
  * @return int32_t 
  */
-int32_t slf_token_set_span(SlfToken *token, SlfUnit *span);
+int32_t slf_token_add_unit(SlfToken *token, SlfUnit unit);
+
+inline bool _slf_token_span_too_long(SlfToken *token);
+
+/**
+ * @brief Guess the TokenKind of token.
+ * 
+ * 1: If can eat another unit
+ * 0: If cannot eat another unit
+ * -1: token->span has exceeded capacity
+ * 
+ * @param token 
+ * @return int32_t 
+ */
+int32_t _slf_token_guess_kind(SlfToken *token);
 
 /**
  * @brief Checks if token->span has already been allocated on the heap.
@@ -104,11 +126,43 @@ inline int32_t _slf_token_check_span_allocated(SlfToken *token);
 inline int32_t _slf_token_check_length(SlfToken *token);
 
 /**
+ * @brief Set token->span to a 0 length C string.
+ * 
+ * @param token 
+ * @return int32_t 
+ */
+int32_t _slf_token_reset_span(SlfToken *token);
+
+/**
  * @brief Allocate memory for token->span.
  * 
  * @param token 
  * @return int32_t 
  */
 int32_t _slf_token_alloc(SlfToken *token);
+
+inline bool _slf_token_is_empty(SlfToken *token);
+
+inline bool _slf_is_eof(SlfUnit unit);
+
+inline bool _slf_is_ascii_lower(SlfUnit unit);
+
+inline bool _slf_is_ascii_upper(SlfUnit unit);
+
+inline bool _slf_is_digit(SlfUnit unit);
+
+inline bool _slf_is_underscore(SlfUnit unit);
+
+inline bool _slf_is_potential_identifier_start(SlfUnit unit);
+
+inline bool _slf_is_potential_identifier_unit(SlfUnit unit);
+
+inline bool _slf_is_left_bracket(SlfUnit unit);
+
+inline bool _slf_is_right_bracket(SlfUnit unit);
+
+inline bool _slf_is_whitespace(SlfUnit unit);
+
+inline bool _slf_is_comma(SlfUnit unit);
 
 #endif
