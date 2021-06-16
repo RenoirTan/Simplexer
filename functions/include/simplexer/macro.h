@@ -7,4 +7,6 @@
 #   define SLF_IFERROR(status) if (status)
 #   define SLF_ERROR_RETURN(status) SLF_IFERROR(status) { return status; }
 
+#   define SLF_NULL_RETURN(pointer, obj) if (pointer == NULL) { return obj; }
+
 #endif

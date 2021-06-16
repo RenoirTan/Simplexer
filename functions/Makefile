@@ -25,7 +25,7 @@ else
 endif
 FARSO := $(FSO)$(FAR)
 
-CDEF := 
+CDEF := #-DSIMPLEXER_DEBUG
 CINC := -I$(DINC)
 CCSTD := c11
 CCXXSTD := c++17

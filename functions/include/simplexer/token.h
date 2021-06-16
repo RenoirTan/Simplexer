@@ -3,6 +3,7 @@
 
 #   include <stdbool.h>
 #   include <stdint.h>
+#   include <stdlib.h>
 #   include "macro.h"
 #   include "types.h"
 
@@ -89,19 +90,25 @@ int32_t slf_token_destroy(SlfToken *token);
  */
 int32_t slf_token_add_unit(SlfToken *token, SlfUnit unit);
 
-inline bool _slf_token_span_too_long(SlfToken *token);
-
 /**
- * @brief Guess the TokenKind of token.
- * 
- * 1: If can eat another unit
- * 0: If cannot eat another unit
- * -1: token->span has exceeded capacity
+ * @brief Reset the token to default values.
  * 
  * @param token 
  * @return int32_t 
  */
-int32_t _slf_token_guess_kind(SlfToken *token);
+int32_t slf_token_reset(SlfToken *token);
+
+// inline bool _slf_token_span_too_long(SlfToken *token);
+
+/**
+ * @brief Guess the TokenKind of a token if `unit` was appended to the span
+ * and return the status the token should be at.
+ * 
+ * @param token 
+ * @param unit 
+ * @return int32_t 
+ */
+int32_t _slf_token_guess_kind(SlfToken *token, SlfUnit unit);
 
 /**
  * @brief Checks if token->span has already been allocated on the heap.
@@ -114,7 +121,7 @@ int32_t _slf_token_guess_kind(SlfToken *token);
  * @param token 
  * @return int32_t 
  */
-inline int32_t _slf_token_check_span_allocated(SlfToken *token);
+// inline int32_t _slf_token_check_span_allocated(SlfToken *token);
 
 /**
  * @brief Check (and change, if necessary) the value of token->length
@@ -123,7 +130,7 @@ inline int32_t _slf_token_check_span_allocated(SlfToken *token);
  * @param token 
  * @return int32_t 
  */
-inline int32_t _slf_token_check_length(SlfToken *token);
+// inline int32_t _slf_token_check_length(SlfToken *token);
 
 /**
  * @brief Set token->span to a 0 length C string.
@@ -140,6 +147,8 @@ int32_t _slf_token_reset_span(SlfToken *token);
  * @return int32_t 
  */
 int32_t _slf_token_alloc(SlfToken *token);
+
+/*
 
 inline bool _slf_token_is_empty(SlfToken *token);
 
@@ -164,5 +173,7 @@ inline bool _slf_is_right_bracket(SlfUnit unit);
 inline bool _slf_is_whitespace(SlfUnit unit);
 
 inline bool _slf_is_comma(SlfUnit unit);
+
+*/
 
 #endif
