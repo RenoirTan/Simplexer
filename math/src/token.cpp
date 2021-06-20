@@ -285,8 +285,7 @@ namespace Simplexer::Math {
         std::vector<Token> tokens;
         Token token;
         while (!token.isEof()) {
-            token = this->next();
-            tokens.push_back(token);
+            tokens.push_back(std::move(this->next()));
         }
         return tokens;
     }

@@ -9,6 +9,8 @@
         "fstream": "cpp",
         "ostream": "cpp",
         "iostream": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "vector": "cpp",
+        "type_traits": "cpp"
     }
 }
